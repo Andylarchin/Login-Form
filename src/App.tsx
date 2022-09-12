@@ -1,15 +1,13 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import React from "react";
+import "./App.css";
+import Body from "./Components/Login_Body/Login_Body";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <div className="App">
-     <h1>Welcome to Login Form!</h1>
+    <Body/>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
