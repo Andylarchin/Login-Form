@@ -1,37 +1,28 @@
-import React, { useState,useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import "./Login_Body.css";
-import FC from "react";
 import { useForm } from "react-hook-form";
 
 const Login_Body = () => {
-  // type ConstVaues = {
-  //   username: any;
-  //   password: any;
-  // };
-
-  const ref = useRef(null);
-
   const {
     register,
     handleSubmit,
     formState: { errors },
-    watch
+    watch,
   } = useForm();
   const [user, setUser] = useState(0);
-  const [password,setPassword] = useState(0);
-  const [username,setUsername] = useState(0);
-  const [added,setAdded] = useState(false);
-  const [addValue,setAddValue] = useState(false);
+  const [password, setPassword] = useState(0);
+  const [username, setUsername] = useState(0);
+  const [added, setAdded] = useState(false);
+  const [addValue, setAddValue] = useState(false);
 
   useEffect(() => {
     setUsername(watch().username);
     setPassword(watch().password);
-  },[watch()]);
+  }, [watch()]);
 
   useEffect(() => {
-      alert('Please register your user');
+    alert("Please register your user");
   }, []);
-
 
   return (
     <div className="container" style={{ height: "100vh", width: "1536px" }}>
@@ -41,10 +32,10 @@ const Login_Body = () => {
       <div className="Login_Body">
         <form
           onSubmit={handleSubmit((data) => {
-            if(added === false) {
-              setUser({...data});
+            if (added === false) {
+              setUser({ ...data });
               setAdded(true);
-              console.log(data,added);
+              console.log(data, added);
             }
           })}
         >
@@ -55,8 +46,7 @@ const Login_Body = () => {
             <label htmlFor="username">Username</label>
             <input
               className="username_input"
-              ref = {ref}
-              id = 'usernameInput'
+              id="usernameInput"
               {...register("username", {
                 required: true,
               })}
@@ -68,8 +58,8 @@ const Login_Body = () => {
             <label htmlFor="password">Password</label>
             <input
               className="password_input"
-              id = 'passwordInput'
-              {...register("password", { required : true})}
+              id="passwordInput"
+              {...register("password", { required: true })}
               type="password"
             ></input>
             {errors.username && <p>This field is required</p>}
@@ -78,9 +68,9 @@ const Login_Body = () => {
             className="signIn_button"
             type="submit"
             onClick={() => {
-               setAddValue(true);
-               document.getElementById('usernameInput').value = '';
-               document.getElementById('passwordInput').value = '';
+              setAddValue(true);
+              document.getElementById("usernameInput").value = "";
+              document.getElementById("passwordInput").value = "";
             }}
           >
             Register
@@ -90,14 +80,11 @@ const Login_Body = () => {
             className="signIn_button"
             type="submit"
             onClick={() => {
-              console.log(user,username,password);
-              if (
-                username === user.username &&
-                password === user.password
-              ) {
+              console.log(user, username, password);
+              if (username === user.username && password === user.password) {
                 alert("You have successfully logged in");
               } else {
-                alert("Inccorect input");
+                alert("Incorect input");
               }
             }}
           >
