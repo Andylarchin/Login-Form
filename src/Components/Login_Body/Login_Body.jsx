@@ -9,10 +9,9 @@ const Login_Body = () => {
     formState: { errors },
     watch,
   } = useForm();
-  const [user, setUser] = useState(0);
+  const [user, setUser] = useState([]);
   const [password, setPassword] = useState(0);
   const [username, setUsername] = useState(0);
-  const [added, setAdded] = useState(false);
   const [addValue, setAddValue] = useState(false);
 
   useEffect(() => {
@@ -32,11 +31,7 @@ const Login_Body = () => {
       <div className="Login_Body">
         <form
           onSubmit={handleSubmit((data) => {
-            if (added === false) {
-              setUser({ ...data });
-              setAdded(true);
-              console.log(data, added);
-            }
+            setUser([...user, data]);
           })}
         >
           <section className="copy">
@@ -81,12 +76,28 @@ const Login_Body = () => {
             type="submit"
             onClick={() => {
               console.log(user, username, password);
-              if (username === user.username && password === user.password) {
-                alert("You have successfully logged in");
-              } else {
-                alert("Incorect input");
-              }
+              // if (username === user.map(user => {
+              //   if(user.username === username) {
+              //     return user.username;
+              //   }
+              // }) && password === user.map(user => {
+              //   if(user.password === password) {
+              //     return user.password;
+              //   }
+              // })) {
+              //   alert("You have successfully logged in");
+              // } else {
+              //   alert("Incorect input");
+              // }
+              user.map(data=> {
+                if(data.username === username && data.password === password) {
+                  alert('You entered')
+                } else {
+                  console.log('nope');
+                }
+              })
             }}
+            
           >
             Log in
           </button>
