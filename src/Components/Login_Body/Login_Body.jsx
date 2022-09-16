@@ -1,28 +1,10 @@
 import React, { useState, useEffect } from "react";
 import "./Login_Body.css";
 import { useForm } from "react-hook-form";
-
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import { getFirestore, collection, addDoc, getDocs } from "firebase/firestore";
+import { collection, addDoc, getDocs } from "firebase/firestore";
+import { database } from "../../firebase-config";
 
 const Login_Body = () => {
-  const firebaseConfig = {
-    apiKey: "AIzaSyCyL5T_tBCes_i-nLB8Pj_9oe1sCooypFc",
-    authDomain: "login-form-6715c.firebaseapp.com",
-    projectId: "login-form-6715c",
-    storageBucket: "login-form-6715c.appspot.com",
-    messagingSenderId: "658368695384",
-    appId: "1:658368695384:web:fd88cd239df36206490e2d",
-    measurementId: "G-0BH3PTG5QY",
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-
-  const database = getFirestore(app);
-
   const ref = collection(database, "users");
 
   const {
@@ -31,7 +13,6 @@ const Login_Body = () => {
     formState: { errors },
     watch,
   } = useForm();
-  const [user, setUser] = useState([]);
   const [password, setPassword] = useState(0);
   const [username, setUsername] = useState(0);
   const [addValue, setAddValue] = useState(0);
@@ -68,7 +49,6 @@ const Login_Body = () => {
       <div className="Login_Body">
         <form
           onSubmit={handleSubmit((data) => {
-            setUser([...user, data]);
             addDoc(ref, {
               username: data.username,
               password: data.password,
