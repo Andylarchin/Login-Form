@@ -10,6 +10,10 @@
   },
   "dependencies": {
     "bootstrap": "^5.2.1",
+    "express": "^4.18.1",
+    "firebase": "^9.10.0",
+    "node": "^18.9.0",
+    "nodemon": "^2.0.19",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.35.0"

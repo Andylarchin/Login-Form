@@ -2,7 +2,29 @@ import React, { useState, useEffect } from "react";
 import "./Login_Body.css";
 import { useForm } from "react-hook-form";
 
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+import { getFirestore, collection, addDoc, getDocs } from "firebase/firestore";
+
 const Login_Body = () => {
+  const firebaseConfig = {
+    apiKey: "AIzaSyCyL5T_tBCes_i-nLB8Pj_9oe1sCooypFc",
+    authDomain: "login-form-6715c.firebaseapp.com",
+    projectId: "login-form-6715c",
+    storageBucket: "login-form-6715c.appspot.com",
+    messagingSenderId: "658368695384",
+    appId: "1:658368695384:web:fd88cd239df36206490e2d",
+    measurementId: "G-0BH3PTG5QY",
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+
+  const database = getFirestore(app);
+
+  const ref = collection(database, "users");
+
   const {
     register,
     handleSubmit,
@@ -12,7 +34,8 @@ const Login_Body = () => {
   const [user, setUser] = useState([]);
   const [password, setPassword] = useState(0);
   const [username, setUsername] = useState(0);
-  const [addValue, setAddValue] = useState(false);
+  const [addValue, setAddValue] = useState(0);
+  const [fire, setFire] = useState([]);
 
   useEffect(() => {
     setUsername(watch().username);
@@ -20,8 +43,22 @@ const Login_Body = () => {
   }, [watch()]);
 
   useEffect(() => {
-    alert("Please register your user");
+    const getUsers = async () => {
+      const data = await getDocs(ref);
+      setFire(data.docs.map((data) => ({ ...data.data(), id: data.id })));
+    };
+    getUsers();
+
+    console.log(fire);
   }, []);
+
+  useEffect(() => {
+    const getUsers = async () => {
+      const data = await getDocs(ref);
+      setFire(data.docs.map((data) => ({ ...data.data(), id: data.id })));
+    };
+    getUsers();
+  }, [addValue]);
 
   return (
     <div className="container" style={{ height: "100vh", width: "1536px" }}>
@@ -32,6 +69,10 @@ const Login_Body = () => {
         <form
           onSubmit={handleSubmit((data) => {
             setUser([...user, data]);
+            addDoc(ref, {
+              username: data.username,
+              password: data.password,
+            });
           })}
         >
           <section className="copy">
@@ -63,7 +104,7 @@ const Login_Body = () => {
             className="signIn_button"
             type="submit"
             onClick={() => {
-              setAddValue(true);
+              setAddValue(addValue + 1);
               document.getElementById("usernameInput").value = "";
               document.getElementById("passwordInput").value = "";
             }}
@@ -73,31 +114,16 @@ const Login_Body = () => {
           <br />
           <button
             className="signIn_button"
-            type="submit"
+            type="button"
             onClick={() => {
-              console.log(user, username, password);
-              // if (username === user.map(user => {
-              //   if(user.username === username) {
-              //     return user.username;
-              //   }
-              // }) && password === user.map(user => {
-              //   if(user.password === password) {
-              //     return user.password;
-              //   }
-              // })) {
-              //   alert("You have successfully logged in");
-              // } else {
-              //   alert("Incorect input");
-              // }
-              user.map(data=> {
-                if(data.username === username && data.password === password) {
-                  alert('You entered')
+              fire.map((data) => {
+                if (data.username === username && data.password === password) {
+                  alert("You entered");
                 } else {
-                  console.log('nope');
+                  console.log("nope");
                 }
-              })
+              });
             }}
-            
           >
             Log in
           </button>
