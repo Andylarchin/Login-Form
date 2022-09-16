@@ -5,24 +5,30 @@ import { collection, addDoc, getDocs } from "firebase/firestore";
 import { database } from "../../firebase-config";
 
 const Login_Body = () => {
+  // Reference to the firebase database
   const ref = collection(database, "users");
 
+  // Import all necessary tools from react-hook-form
   const {
     register,
     handleSubmit,
     formState: { errors },
     watch,
   } = useForm();
+
+  // All the useStates 
   const [password, setPassword] = useState(0);
   const [username, setUsername] = useState(0);
   const [addValue, setAddValue] = useState(0);
   const [fire, setFire] = useState([]);
 
+  // Change the password and username as soon as I type something in the input
   useEffect(() => {
     setUsername(watch().username);
     setPassword(watch().password);
   }, [watch()]);
 
+  // Fetch and get data as soon as the app loads
   useEffect(() => {
     const getUsers = async () => {
       const data = await getDocs(ref);
@@ -33,6 +39,8 @@ const Login_Body = () => {
     console.log(fire);
   }, []);
 
+
+// Update the users value as I hit the register button 
   useEffect(() => {
     const getUsers = async () => {
       const data = await getDocs(ref);
@@ -48,6 +56,7 @@ const Login_Body = () => {
       </div>
       <div className="Login_Body">
         <form
+        // Add data to firebase docs on submit 
           onSubmit={handleSubmit((data) => {
             addDoc(ref, {
               username: data.username,
@@ -84,6 +93,7 @@ const Login_Body = () => {
             className="signIn_button"
             type="submit"
             onClick={() => {
+              // Basically just make the data update and delete the input old value 
               setAddValue(addValue + 1);
               document.getElementById("usernameInput").value = "";
               document.getElementById("passwordInput").value = "";
@@ -95,6 +105,7 @@ const Login_Body = () => {
           <button
             className="signIn_button"
             type="button"
+            // Loop though the users data and check if the current input matches the data on the firebase database 
             onClick={() => {
               fire.map((data) => {
                 if (data.username === username && data.password === password) {
