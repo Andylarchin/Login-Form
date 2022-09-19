@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import "./Login_Body.css";
 import { useForm } from "react-hook-form";
-import { collection, addDoc, getDocs,} from "firebase/firestore";
+import { collection, addDoc, getDocs } from "firebase/firestore";
 import { database } from "../../firebase-config";
 import { OldUserContext } from "../oldUserContext/oldUserContext";
 import { useNavigate } from "react-router-dom";
@@ -11,7 +11,7 @@ const Login_Body = () => {
   const navigate = useNavigate();
   const ref = collection(database, "users");
 
-  const {oldData,setOldData} = useContext(OldUserContext);
+  const { oldData, setOldData } = useContext(OldUserContext);
 
   // Import all necessary tools from react-hook-form
   const {
@@ -38,20 +38,17 @@ const Login_Body = () => {
     const getUsers = async () => {
       const data = await getDocs(ref);
       setFire(data.docs.map((data) => ({ ...data.data(), id: data.id })));
-        };
+    };
     getUsers();
 
     console.log(fire);
   }, []);
 
-
-
   // Change users name and password
   const updateUser = async (id, oldPassword, oldUsername) => {
-      setOldData([id,oldPassword,oldUsername]);
-      console.log(oldData);
-  }
-
+    setOldData([id, oldPassword, oldUsername]);
+    console.log(oldData);
+  };
 
   // Update the users value as I hit the register button
   useEffect(() => {
@@ -131,7 +128,7 @@ const Login_Body = () => {
           >
             Log in
           </button>
-          <br/>
+          <br />
           <button
             className="signIn_button"
             type="button"
@@ -139,12 +136,11 @@ const Login_Body = () => {
             onClick={() => {
               let user = fire.filter((user) => user.username === username);
               let userId = user.map((user) => user.id)[0];
-              updateUser(userId,password,username);
-              navigate('/reset')
-            }
-          }
+              updateUser(userId, password, username);
+              navigate("/reset");
+            }}
           >
-            Update User 
+            Update User
           </button>
         </form>
       </div>
