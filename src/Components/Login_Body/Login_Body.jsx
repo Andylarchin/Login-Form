@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import "./Login_Body.css";
 import { useForm } from "react-hook-form";
-import { collection, addDoc, getDocs} from "firebase/firestore";
+import { collection, addDoc, getDocs,} from "firebase/firestore";
 import { database } from "../../firebase-config";
 import { OldUserContext } from "../oldUserContext/oldUserContext";
 import { useNavigate } from "react-router-dom";
@@ -140,7 +140,7 @@ const Login_Body = () => {
               let user = fire.filter((user) => user.username === username);
               let userId = user.map((user) => user.id)[0];
               updateUser(userId,password,username);
-              navigate('/reset');
+              navigate('/reset')
             }
           }
           >
