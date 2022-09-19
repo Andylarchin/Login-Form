@@ -1,12 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "./Login_Body.css";
 import { useForm } from "react-hook-form";
-import { collection, addDoc, getDocs } from "firebase/firestore";
+import { collection, addDoc, getDocs} from "firebase/firestore";
 import { database } from "../../firebase-config";
+import { OldUserContext } from "../oldUserContext/oldUserContext";
+import { useNavigate } from "react-router-dom";
 
 const Login_Body = () => {
   // Reference to the firebase database
+  const navigate = useNavigate();
   const ref = collection(database, "users");
+
+  const {oldData,setOldData} = useContext(OldUserContext);
 
   // Import all necessary tools from react-hook-form
   const {
@@ -16,7 +21,7 @@ const Login_Body = () => {
     watch,
   } = useForm();
 
-  // All the useStates 
+  // All the useStates
   const [password, setPassword] = useState(0);
   const [username, setUsername] = useState(0);
   const [addValue, setAddValue] = useState(0);
@@ -33,14 +38,22 @@ const Login_Body = () => {
     const getUsers = async () => {
       const data = await getDocs(ref);
       setFire(data.docs.map((data) => ({ ...data.data(), id: data.id })));
-    };
+        };
     getUsers();
 
     console.log(fire);
   }, []);
 
 
-// Update the users value as I hit the register button 
+
+  // Change users name and password
+  const updateUser = async (id, oldPassword, oldUsername) => {
+      setOldData([id,oldPassword,oldUsername]);
+      console.log(oldData);
+  }
+
+
+  // Update the users value as I hit the register button
   useEffect(() => {
     const getUsers = async () => {
       const data = await getDocs(ref);
@@ -56,7 +69,7 @@ const Login_Body = () => {
       </div>
       <div className="Login_Body">
         <form
-        // Add data to firebase docs on submit 
+          // Add data to firebase docs on submit
           onSubmit={handleSubmit((data) => {
             addDoc(ref, {
               username: data.username,
@@ -93,7 +106,7 @@ const Login_Body = () => {
             className="signIn_button"
             type="submit"
             onClick={() => {
-              // Basically just make the data update and delete the input old value 
+              // Basically just make the data update and delete the input old value
               setAddValue(addValue + 1);
               document.getElementById("usernameInput").value = "";
               document.getElementById("passwordInput").value = "";
@@ -105,7 +118,7 @@ const Login_Body = () => {
           <button
             className="signIn_button"
             type="button"
-            // Loop though the users data and check if the current input matches the data on the firebase database 
+            // Loop though the users data and check if the current input matches the data on the firebase database
             onClick={() => {
               fire.map((data) => {
                 if (data.username === username && data.password === password) {
@@ -117,6 +130,21 @@ const Login_Body = () => {
             }}
           >
             Log in
+          </button>
+          <br/>
+          <button
+            className="signIn_button"
+            type="button"
+            // Loop though the users data and check if the current input matches the data on the firebase database
+            onClick={() => {
+              let user = fire.filter((user) => user.username === username);
+              let userId = user.map((user) => user.id)[0];
+              updateUser(userId,password,username);
+              navigate('/reset');
+            }
+          }
+          >
+            Update User 
           </button>
         </form>
       </div>
