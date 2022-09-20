@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect, useReducer } from "react";
 import "./Reset_User.css";
 import { useForm } from "react-hook-form";
 import { updateDoc, doc } from "firebase/firestore";
@@ -8,14 +8,22 @@ import { OldUserContext } from "../oldUserContext/oldUserContext";
 import Swal from "sweetalert2";
 
 const Reset_User = () => {
-  const [newUsername, setNewUsername] = useState(0);
-  const [newPassword, setNewPassword] = useState(0);
+  const reducer = (state, action) => {
+    switch (action.type) {
+      case "username":
+        return { ...state, username: action.payload };
+      case "password":
+        return { ...state, password: action.payload };
+    }
+  };
+
+  const[state,dispatch] = useReducer(reducer, {username : '', password : ''})
   const [update, setUpdate] = useState(false);
   const { oldData } = useContext(OldUserContext);
 
   const navigate = useNavigate();
 
-  console.log(oldData, newUsername, newPassword);
+  console.log(oldData, state.username, state.password);
   const {
     register,
     handleSubmit,
@@ -25,13 +33,13 @@ const Reset_User = () => {
   useEffect(() => {
     if (update === true) {
       const updateUser = async () => {
-        const newfield = { username: newUsername, password: newPassword };
+        const newfield = { username: state.username, password: state.password };
         const userDoc = doc(database, "users", oldData[0]);
         await updateDoc(userDoc, newfield);
       };
 
       updateUser();
-      Swal.fire("Greatjob", "You have changed your user data", "success").then(
+      Swal.fire("Great job!", "You have changed your user data", "success").then(
         (result) => {
           if (result.isConfirmed) {
             navigate("/");
@@ -50,8 +58,10 @@ const Reset_User = () => {
         <form
           id="form"
           onSubmit={handleSubmit((data) => {
-            setNewPassword(data.password);
-            setNewUsername(data.username);
+            // setNewPassword(data.password);
+            // setNewUsername(data.username);
+            dispatch({type : 'username', payload : data.username});
+            dispatch({type : 'password', payload : data.password});
             setUpdate(true);
           })}
         >
