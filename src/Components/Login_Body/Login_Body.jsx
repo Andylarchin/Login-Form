@@ -10,11 +10,17 @@ const Login_Body = () => {
   const reducer = (state, action) => {
     switch (action.type) {
       case "username":
-        return {...state, username: action.payload };
+        return state.username !== action.payload
+          ? { ...state, username: action.payload }
+          : state;
+
       case "password":
-        return {...state, password : action.payload};
-      default : 
-      throw new Error();
+        return state.password !== action.payload
+          ? { ...state, password: action.payload }
+          : state;
+
+      default:
+        return state;
     }
   };
 
