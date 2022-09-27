@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect, useReducer } from "react";
-import "./Reset_User.css";
+import "/src/index.css";
 import { useForm } from "react-hook-form";
 import { updateDoc, doc } from "firebase/firestore";
 import { database } from "../../firebase-config";
@@ -17,7 +17,7 @@ const Reset_User = () => {
     }
   };
 
-  const[state,dispatch] = useReducer(reducer, {username : '', password : ''})
+  const [state, dispatch] = useReducer(reducer, { username: "", password: "" });
   const [update, setUpdate] = useState(false);
   const { oldData } = useContext(OldUserContext);
 
@@ -39,39 +39,46 @@ const Reset_User = () => {
       };
 
       updateUser();
-      Swal.fire("Great job!", "You have changed your user data", "success").then(
-        (result) => {
-          if (result.isConfirmed) {
-            navigate("/");
-          }
+      Swal.fire(
+        "Great job!",
+        "You have changed your user data",
+        "success"
+      ).then((result) => {
+        if (result.isConfirmed) {
+          navigate("/");
         }
-      );
+      });
     }
   }, [update]);
 
   return (
-    <div className="container" style={{ height: "100vh", width: "1536px" }}>
-      <div className="Image_Body">
-        <section className="copy"></section>
+    <div className="flex flex-col min-h-screen" id="container">
+      <div
+        className=" h-[200px] bg-cover items-center justify-center bg-[url('../xbg_1.jpg.pagespeed.ic.R5QWIA8_nZ.jfif')]"
+        id="picture"
+      >
+        <section className="text-center"></section>
       </div>
-      <div className="Login_Body">
+      <div className="flex items-center justify-center " id="login">
         <form
           id="form"
           onSubmit={handleSubmit((data) => {
             // setNewPassword(data.password);
             // setNewUsername(data.username);
-            dispatch({type : 'username', payload : data.username});
-            dispatch({type : 'password', payload : data.password});
+            dispatch({ type: "username", payload: data.username });
+            dispatch({ type: "password", payload: data.password });
             setUpdate(true);
           })}
         >
-          <section className="copy">
-            <h2>New Register</h2>
+          <section className="text-center">
+            <h2 className="text-2xl font-bold m-[1.5em]">New Register</h2>
           </section>
           <div className="input-container username">
-            <label htmlFor="username">New Username</label>
+            <label htmlFor="username" className="block mb-2 text-xs">
+              New Username
+            </label>
             <input
-              className="username_input"
+              className="block w-full box-border rounded-lg mb-5 text-sm p-[1em] border-[1px] border-gray-400 w-[300px] h-[42.8px]"
               id="usernameInput"
               {...register("username", {
                 required: true,
@@ -81,9 +88,11 @@ const Reset_User = () => {
             {errors.username && <p>This field is required</p>}
           </div>
           <div className="input-container password">
-            <label htmlFor="password">New Password</label>
+            <label htmlFor="password" className="block mb-2 text-xs">
+              New Password
+            </label>
             <input
-              className="password_input"
+              className="block w-full box-border rounded-lg mb-5 text-sm p-[1em] border-[1px] border-gray-400 w-[300px] h-[42.8px]"
               id="passwordInput"
               {...register("password", { required: true })}
               type="password"
@@ -91,11 +100,9 @@ const Reset_User = () => {
             {errors.username && <p>This field is required</p>}
           </div>
           <button
-            className="signIn_button"
+            className="block w-full bg-gray-800 text-white font-bold p-4 rounded-lg text-xs uppercase tracking-[0,5px]"
             type="submit"
-            onClick={() => {
-              
-            }}
+            onClick={() => {}}
           >
             Update User
           </button>

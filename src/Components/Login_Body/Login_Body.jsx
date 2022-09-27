@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useContext, useReducer } from "react";
-import "./Login_Body.css";
+import React, { useState, useEffect, useContext } from "react";
 import { useForm } from "react-hook-form";
 import { collection, addDoc, getDocs } from "firebase/firestore";
 import { database } from "../../firebase-config";
@@ -7,24 +6,6 @@ import { OldUserContext } from "../oldUserContext/oldUserContext";
 import { useNavigate } from "react-router-dom";
 
 const Login_Body = () => {
-  const reducer = (state, action) => {
-    switch (action.type) {
-      case "username":
-        return state.username !== action.payload
-          ? { ...state, username: action.payload }
-          : state;
-
-      case "password":
-        return state.password !== action.payload
-          ? { ...state, password: action.payload }
-          : state;
-
-      default:
-        return state;
-    }
-  };
-
-  const [state, dispatch] = useReducer(reducer, { password: "", username: "" });
   const navigate = useNavigate();
   const ref = collection(database, "users");
 
@@ -39,14 +20,15 @@ const Login_Body = () => {
   } = useForm();
 
   // All the useStates
+  const [password, setPassword] = useState(0);
+  const [username, setUsername] = useState(0);
   const [addValue, setAddValue] = useState(0);
   const [fire, setFire] = useState([]);
 
   // Change the password and username as soon as I type something in the input
   useEffect(() => {
-    dispatch({type : 'username', payload : watch().username});
-    dispatch({type : 'password', payload : watch().password});
-    
+    setUsername(watch().username);
+    setPassword(watch().password);
   }, [watch()]);
 
   // Fetch and get data as soon as the app loads
@@ -76,12 +58,16 @@ const Login_Body = () => {
   }, [addValue]);
 
   return (
-    <div className="container" style={{ height: "100vh", width: "1536px" }}>
-      <div className="Image_Body">
-        <section className="copy"></section>
+    <div className="flex flex-col min-h-screen" id="container">
+      <div
+        className=" h-[200px] bg-cover items-center justify-center bg-[url('../xbg_1.jpg.pagespeed.ic.R5QWIA8_nZ.jfif')]"
+        id="picture"
+      >
+        <section className="text-center"></section>
       </div>
-      <div className="Login_Body">
+      <div className="flex items-center justify-center " id="login">
         <form
+          className=""
           // Add data to firebase docs on submit
           onSubmit={handleSubmit((data) => {
             addDoc(ref, {
@@ -90,13 +76,15 @@ const Login_Body = () => {
             });
           })}
         >
-          <section className="copy">
-            <h2>Log in</h2>
+          <section className="text-center">
+            <h2 className="text-2xl font-bold m-[1.5em]">Log in</h2>
           </section>
           <div className="input-container username">
-            <label htmlFor="username">Username</label>
+            <label htmlFor="username" className="block mb-2 text-xs">
+              Username
+            </label>
             <input
-              className="username_input"
+              className="block w-full box-border rounded-lg mb-5 text-sm p-[1em] border-[1px] border-gray-400 w-[300px] h-[42.8px]"
               id="usernameInput"
               {...register("username", {
                 required: true,
@@ -106,9 +94,11 @@ const Login_Body = () => {
             {errors.username && <p>This field is required</p>}
           </div>
           <div className="input-container password">
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password" className="block mb-2 text-xs">
+              Password
+            </label>
             <input
-              className="password_input"
+              className="block w-full box-border rounded-lg mb-5 text-sm p-[1em] border-[1px] border-gray-400 h-[46.8px]"
               id="passwordInput"
               {...register("password", { required: true })}
               type="password"
@@ -116,7 +106,7 @@ const Login_Body = () => {
             {errors.username && <p>This field is required</p>}
           </div>
           <button
-            className="signIn_button"
+            className="block w-full bg-gray-800 text-white font-bold p-4 rounded-lg text-xs uppercase tracking-[0,5px]"
             type="submit"
             onClick={() => {
               // Basically just make the data update and delete the input old value
@@ -129,12 +119,12 @@ const Login_Body = () => {
           </button>
           <br />
           <button
-            className="signIn_button"
+            className="block w-full bg-gray-800 text-white font-bold p-4 rounded-lg text-xs uppercase tracking-[0,5px]"
             type="button"
             // Loop though the users data and check if the current input matches the data on the firebase database
             onClick={() => {
               fire.map((data) => {
-                if (data.username === state.username && data.password === state.password) {
+                if (data.username === username && data.password === password) {
                   alert("You entered");
                 } else {
                   console.log("nope");
@@ -146,13 +136,13 @@ const Login_Body = () => {
           </button>
           <br />
           <button
-            className="signIn_button"
+            className="block w-full bg-gray-800 text-white font-bold p-4 rounded-lg text-xs uppercase tracking-[0,5px]"
             type="button"
             // Loop though the users data and check if the current input matches the data on the firebase database
             onClick={() => {
-              let user = fire.filter((user) => user.username === state.username);
+              let user = fire.filter((user) => user.username === username);
               let userId = user.map((user) => user.id)[0];
-              updateUser(userId, state.password, state.username);
+              updateUser(userId, password, username);
               navigate("/reset");
             }}
           >
