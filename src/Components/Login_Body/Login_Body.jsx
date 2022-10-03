@@ -4,6 +4,9 @@ import { collection, addDoc, getDocs } from "firebase/firestore";
 import { database } from "../../firebase-config";
 import { OldUserContext } from "../oldUserContext/oldUserContext";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
+import { data } from "autoprefixer";
+
 
 const Login_Body = () => {
   const navigate = useNavigate();
@@ -123,11 +126,34 @@ const Login_Body = () => {
             type="button"
             // Loop though the users data and check if the current input matches the data on the firebase database
             onClick={() => {
+              let repeat = false;
               fire.map((data) => {
                 if (data.username === username && data.password === password) {
-                  alert("You entered");
+                  Swal.fire(
+                    "Great job!",
+                    "You succesfully logged in your account",
+                    "success"
+                  ).then((result)=> {
+                    if(result.isConfirmed) {
+                      document.getElementById("usernameInput").value = "";
+                      document.getElementById("passwordInput").value = "";
+                    }
+                    repeat = false;
+                  });
                 } else {
-                  console.log("nope");
+                  if(repeat === false) {
+                     Swal.fire(
+                      "Ooops...",
+                      'Something went wrong!',
+                      "error"
+                     ).then((result) => {
+                      if(result.isConfirmed) {
+                        repeat = true;
+                         document.getElementById("usernameInput").value = "";
+                         document.getElementById("passwordInput").value = "";
+                      }
+                     })
+                  }
                 }
               });
             }}
@@ -142,8 +168,17 @@ const Login_Body = () => {
             onClick={() => {
               let user = fire.filter((user) => user.username === username);
               let userId = user.map((user) => user.id)[0];
+              if(user && data.password === password) {
               updateUser(userId, password, username);
               navigate("/reset");
+              } else {
+                 Swal.fire("Ooops...", "Something went wrong!", "error").then((result) => {
+                  if(result.isConfirmed) {
+                      document.getElementById("usernameInput").value = "";
+                      document.getElementById("passwordInput").value = "";
+                  }
+                 });
+              }
             }}
           >
             Update User
