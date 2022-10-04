@@ -1,29 +1,37 @@
-import React, { useState, useContext, useEffect, useReducer } from "react";
-import "/src/index.css";
-import { useForm } from "react-hook-form";
-import { updateDoc, doc } from "firebase/firestore";
-import { database } from "../../firebase-config";
-import { useNavigate } from "react-router-dom";
-import { OldUserContext } from "../oldUserContext/oldUserContext";
-import Swal from "sweetalert2";
+/* eslint-disable import/no-absolute-path */
+import React, {
+  useState, useContext, useEffect, useReducer,
+} from 'react';
+// eslint-disable-next-line import/no-unresolved
+import '/src/index.css';
+import { useForm } from 'react-hook-form';
+import { updateDoc, doc } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import { useTranslation } from 'react-i18next';
+import detectBrowserLanguage from 'detect-browser-language';
+import { database } from '../../firebase-config';
+import { OldUserContext } from '../oldUserContext/oldUserContext';
 
-const Reset_User = () => {
+const resetUser = () => {
+  const { t, i18n } = useTranslation();
+  // eslint-disable-next-line consistent-return
   const reducer = (state, action) => {
+    // eslint-disable-next-line default-case
     switch (action.type) {
-      case "username":
+      case 'username':
         return { ...state, username: action.payload };
-      case "password":
+      case 'password':
         return { ...state, password: action.payload };
     }
   };
 
-  const [state, dispatch] = useReducer(reducer, { username: "", password: "" });
+  const [state, dispatch] = useReducer(reducer, { username: '', password: '' });
   const [update, setUpdate] = useState(false);
   const { oldData } = useContext(OldUserContext);
 
   const navigate = useNavigate();
 
-  console.log(oldData, state.username, state.password);
   const {
     register,
     handleSubmit,
@@ -34,18 +42,16 @@ const Reset_User = () => {
     if (update === true) {
       const updateUser = async () => {
         const newfield = { username: state.username, password: state.password };
-        const userDoc = doc(database, "users", oldData[0]);
+        const userDoc = doc(database, 'users', oldData[0]);
         await updateDoc(userDoc, newfield);
       };
 
+      i18n.changeLanguage(detectBrowserLanguage());
+
       updateUser();
-      Swal.fire(
-        "Great job!",
-        "You have changed your user data",
-        "success"
-      ).then((result) => {
+      Swal.fire(`${t('gudpop')}`, `${t('subgud')}`, 'success').then((result) => {
         if (result.isConfirmed) {
-          navigate("/");
+          navigate('/');
         }
       });
     }
@@ -57,54 +63,53 @@ const Reset_User = () => {
         className=" h-[200px] bg-cover items-center justify-center bg-[url('../xbg_1.jpg.pagespeed.ic.R5QWIA8_nZ.jfif')]"
         id="picture"
       >
-        <section className="text-center"></section>
+        <section className="text-center" />
       </div>
       <div className="flex items-center justify-center " id="login">
         <form
           id="form"
           onSubmit={handleSubmit((data) => {
-            // setNewPassword(data.password);
-            // setNewUsername(data.username);
-            dispatch({ type: "username", payload: data.username });
-            dispatch({ type: "password", payload: data.password });
+            dispatch({ type: 'username', payload: data.username });
+            dispatch({ type: 'password', payload: data.password });
             setUpdate(true);
           })}
         >
           <section className="text-center">
-            <h2 className="text-2xl font-bold m-[1.5em]">New Register</h2>
+            <h2 className="text-2xl font-bold m-[1.5em]">{t('register')}</h2>
           </section>
           <div className="input-container username">
             <label htmlFor="username" className="block mb-2 text-xs">
-              New Username
+              {t('username')}
             </label>
             <input
               className="block w-full box-border rounded-lg mb-5 text-sm p-[1em] border-[1px] border-gray-400 w-[300px] h-[42.8px]"
               id="usernameInput"
-              {...register("username", {
+              // eslint-disable-next-line react/jsx-props-no-spreading
+              {...register('username', {
                 required: true,
               })}
               type="text"
-            ></input>
-            {errors.username && <p>This field is required</p>}
+            />
+            {errors.username && <p>{t('warning')}</p>}
           </div>
           <div className="input-container password">
             <label htmlFor="password" className="block mb-2 text-xs">
-              New Password
+              {t('password')}
             </label>
             <input
               className="block w-full box-border rounded-lg mb-5 text-sm p-[1em] border-[1px] border-gray-400 w-[300px] h-[42.8px]"
               id="passwordInput"
-              {...register("password", { required: true })}
+              // eslint-disable-next-line react/jsx-props-no-spreading
+              {...register('password', { required: true })}
               type="password"
-            ></input>
-            {errors.username && <p>This field is required</p>}
+            />
+            {errors.username && <p>{t('warning')}</p>}
           </div>
           <button
             className="block w-full bg-gray-800 text-white font-bold p-4 rounded-lg text-xs uppercase tracking-[0,5px]"
             type="submit"
-            onClick={() => {}}
           >
-            Update User
+            {t('update')}
           </button>
         </form>
       </div>
@@ -112,4 +117,4 @@ const Reset_User = () => {
   );
 };
 
-export default Reset_User;
+export default resetUser;

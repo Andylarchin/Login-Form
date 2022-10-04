@@ -1,18 +1,20 @@
-import React, { useState, useEffect, useContext } from "react";
-import { useForm } from "react-hook-form";
-import { collection, addDoc, getDocs } from "firebase/firestore";
-import { database } from "../../firebase-config";
-import { OldUserContext } from "../oldUserContext/oldUserContext";
-import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
-import { data } from "autoprefixer";
+/* eslint-disable react/jsx-props-no-spreading */
+import React, { useState, useEffect, useContext } from 'react';
+import { useForm } from 'react-hook-form';
+import { collection, addDoc, getDocs } from 'firebase/firestore';
+import detectBrowserLanguage from 'detect-browser-language';
+import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import { useTranslation } from 'react-i18next';
+import { database } from '../../firebase-config';
+import { OldUserContext } from '../oldUserContext/oldUserContext';
 
-
-const Login_Body = () => {
+const loginBody = () => {
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const ref = collection(database, "users");
+  const ref = collection(database, 'users');
 
-  const { oldData, setOldData } = useContext(OldUserContext);
+  const { setOldData } = useContext(OldUserContext);
 
   // Import all necessary tools from react-hook-form
   const {
@@ -33,32 +35,35 @@ const Login_Body = () => {
     setUsername(watch().username);
     setPassword(watch().password);
   }, [watch()]);
-
   // Fetch and get data as soon as the app loads
   useEffect(() => {
     const getUsers = async () => {
       const data = await getDocs(ref);
-      setFire(data.docs.map((data) => ({ ...data.data(), id: data.id })));
+      setFire(data.docs.map((datas) => ({ ...datas.data(), id: datas.id })));
     };
     getUsers();
 
-    console.log(fire);
+    i18n.changeLanguage(detectBrowserLanguage());
   }, []);
 
   // Change users name and password
   const updateUser = async (id, oldPassword, oldUsername) => {
     setOldData([id, oldPassword, oldUsername]);
-    console.log(oldData);
   };
 
   // Update the users value as I hit the register button
   useEffect(() => {
     const getUsers = async () => {
       const data = await getDocs(ref);
-      setFire(data.docs.map((data) => ({ ...data.data(), id: data.id })));
+      setFire(data.docs.map((datas) => ({ ...datas.data(), id: datas.id })));
     };
     getUsers();
   }, [addValue]);
+
+  const resetField = () => {
+    document.getElementById('usernameInput').value = '';
+    document.getElementById('passwordInput').value = '';
+  };
 
   return (
     <div className="flex flex-col min-h-screen" id="container">
@@ -66,7 +71,7 @@ const Login_Body = () => {
         className=" h-[200px] bg-cover items-center justify-center bg-[url('../xbg_1.jpg.pagespeed.ic.R5QWIA8_nZ.jfif')]"
         id="picture"
       >
-        <section className="text-center"></section>
+        <section className="text-center" />
       </div>
       <div className="flex items-center justify-center " id="login">
         <form
@@ -80,33 +85,33 @@ const Login_Body = () => {
           })}
         >
           <section className="text-center">
-            <h2 className="text-2xl font-bold m-[1.5em]">Log in</h2>
+            <h2 className="text-2xl font-bold m-[1.5em]">{t('login')}</h2>
           </section>
           <div className="input-container username">
             <label htmlFor="username" className="block mb-2 text-xs">
-              Username
+              {t('username')}
             </label>
             <input
               className="block w-full box-border rounded-lg mb-5 text-sm p-[1em] border-[1px] border-gray-400 w-[300px] h-[42.8px]"
               id="usernameInput"
-              {...register("username", {
+              {...register('username', {
                 required: true,
               })}
               type="text"
-            ></input>
-            {errors.username && <p>This field is required</p>}
+            />
+            {errors.username && <p>{t('warning')}</p>}
           </div>
           <div className="input-container password">
             <label htmlFor="password" className="block mb-2 text-xs">
-              Password
+              {t('password')}
             </label>
             <input
               className="block w-full box-border rounded-lg mb-5 text-sm p-[1em] border-[1px] border-gray-400 h-[46.8px]"
               id="passwordInput"
-              {...register("password", { required: true })}
+              {...register('password', { required: true })}
               type="password"
-            ></input>
-            {errors.username && <p>This field is required</p>}
+            />
+            {errors.username && <p>{t('warning')}</p>}
           </div>
           <button
             className="block w-full bg-gray-800 text-white font-bold p-4 rounded-lg text-xs uppercase tracking-[0,5px]"
@@ -114,74 +119,56 @@ const Login_Body = () => {
             onClick={() => {
               // Basically just make the data update and delete the input old value
               setAddValue(addValue + 1);
-              document.getElementById("usernameInput").value = "";
-              document.getElementById("passwordInput").value = "";
+              resetField();
             }}
           >
-            Register
+            {t('register')}
           </button>
           <br />
           <button
             className="block w-full bg-gray-800 text-white font-bold p-4 rounded-lg text-xs uppercase tracking-[0,5px]"
             type="button"
-            // Loop though the users data and check if the current input matches the data on the firebase database
             onClick={() => {
-              let repeat = false;
+              // eslint-disable-next-line array-callback-return
               fire.map((data) => {
                 if (data.username === username && data.password === password) {
-                  Swal.fire(
-                    "Great job!",
-                    "You succesfully logged in your account",
-                    "success"
-                  ).then((result)=> {
-                    if(result.isConfirmed) {
-                      document.getElementById("usernameInput").value = "";
-                      document.getElementById("passwordInput").value = "";
+                  Swal.fire(`${t('gudpop')}`, `${t('subgud')}`, 'success').then((result) => {
+                    if (result.isConfirmed) {
+                      resetField();
                     }
-                    repeat = false;
                   });
-                } else {
-                  if(repeat === false) {
-                     Swal.fire(
-                      "Ooops...",
-                      'Something went wrong!',
-                      "error"
-                     ).then((result) => {
-                      if(result.isConfirmed) {
-                        repeat = true;
-                         document.getElementById("usernameInput").value = "";
-                         document.getElementById("passwordInput").value = "";
-                      }
-                     })
-                  }
+                } else if (data.username !== username && data.password !== password) {
+                  Swal.fire(`${t('errpop')}`, `${t('subwarning')}`, 'error').then(() => {
+                    // eslint-disable-next-line no-console
+                    console.log('the user was not right');
+                  });
                 }
               });
             }}
           >
-            Log in
+            {t('lgin')}
           </button>
           <br />
           <button
             className="block w-full bg-gray-800 text-white font-bold p-4 rounded-lg text-xs uppercase tracking-[0,5px]"
             type="button"
-            // Loop though the users data and check if the current input matches the data on the firebase database
             onClick={() => {
-              let user = fire.filter((user) => user.username === username);
-              let userId = user.map((user) => user.id)[0];
-              if(user && data.password === password) {
-              updateUser(userId, password, username);
-              navigate("/reset");
+              const user = fire.filter((users) => users.username === username);
+              const urpassword = fire.filter((users) => users.password === password);
+              const userId = user.map((users) => users.id)[0];
+              if (user.length > 0 && urpassword.length > 0) {
+                updateUser(userId, password, username);
+                navigate('/reset');
               } else {
-                 Swal.fire("Ooops...", "Something went wrong!", "error").then((result) => {
-                  if(result.isConfirmed) {
-                      document.getElementById("usernameInput").value = "";
-                      document.getElementById("passwordInput").value = "";
+                Swal.fire(`${t('errpop')}`, `${t('subwarning')}`, 'error').then((result) => {
+                  if (result.isConfirmed) {
+                    resetField();
                   }
-                 });
+                });
               }
             }}
           >
-            Update User
+            {t('update')}
           </button>
         </form>
       </div>
@@ -189,4 +176,4 @@ const Login_Body = () => {
   );
 };
 
-export default Login_Body;
+export default loginBody;
