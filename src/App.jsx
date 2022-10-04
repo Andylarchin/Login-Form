@@ -12,7 +12,6 @@ function App() {
   return (
     // eslint-disable-next-line react/jsx-no-comment-textnodes
     <div className="App">
-      // eslint-disable-next-line react/jsx-no-constructed-context-values
       <OldUserContext.Provider value={{ oldData, setOldData }}>
         <Routes>
           <Route exact path="/" element={<Body />} />
