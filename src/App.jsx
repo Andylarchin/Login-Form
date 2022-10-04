@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-constructed-context-values */
 import React, { useState } from 'react';
 import './App.css';
 import { Routes, Route } from 'react-router-dom';
@@ -9,7 +10,9 @@ function App() {
   const [oldData, setOldData] = useState([]);
 
   return (
+    // eslint-disable-next-line react/jsx-no-comment-textnodes
     <div className="App">
+      // eslint-disable-next-line react/jsx-no-constructed-context-values
       <OldUserContext.Provider value={{ oldData, setOldData }}>
         <Routes>
           <Route exact path="/" element={<Body />} />
