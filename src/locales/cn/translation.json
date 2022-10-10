@@ -1,0 +1,13 @@
+{
+  "login": "Log in",
+  "username": "ユーザー名",
+  "password": "パスワード",
+  "register": "登録",
+  "lgin": "LOG IN",
+  "update": "ユーザーの更新",
+  "warning": "この項目は必須です",
+  "subwarning": "エラーが発生しました。",
+  "errpop": "Ooops...",
+  "gudpop": "よくできました！",
+  "subgud": "アカウントにログインしました！"
+}

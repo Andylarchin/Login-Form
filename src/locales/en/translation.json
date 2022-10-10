@@ -1,0 +1,13 @@
+{
+  "login": "Log in",
+  "username": "Username",
+  "password": "Password",
+  "register": "Register",
+  "lgin": "LOG IN",
+  "update": "UPDATE USER",
+  "warning": "This field is required",
+  "subwarning": "Something went wrong!",
+  "errpop": "Ooops...",
+  "gudpop": "Good job!",
+  "subgud": "You succesfully logged in your account!"
+}

@@ -1,8 +1,10 @@
+/* eslint-disable consistent-return */
+/* eslint-disable default-case */
+/* eslint-disable import/no-unresolved */
 /* eslint-disable import/no-absolute-path */
 import React, {
   useState, useContext, useEffect, useReducer,
 } from 'react';
-// eslint-disable-next-line import/no-unresolved
 import '/src/index.css';
 import { useForm } from 'react-hook-form';
 import { updateDoc, doc } from 'firebase/firestore';
@@ -11,13 +13,12 @@ import Swal from 'sweetalert2';
 import { useTranslation } from 'react-i18next';
 import detectBrowserLanguage from 'detect-browser-language';
 import { database } from '../../firebase-config';
+// eslint-disable-next-line import/named
 import { OldUserContext } from '../oldUserContext/oldUserContext';
 
 const resetUser = () => {
   const { t, i18n } = useTranslation();
-  // eslint-disable-next-line consistent-return
   const reducer = (state, action) => {
-    // eslint-disable-next-line default-case
     switch (action.type) {
       case 'username':
         return { ...state, username: action.payload };
@@ -37,6 +38,8 @@ const resetUser = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
+
+  const usernameRegister = register('username');
 
   useEffect(() => {
     if (update === true) {
@@ -84,10 +87,10 @@ const resetUser = () => {
             <input
               className="block w-full box-border rounded-lg mb-5 text-sm p-[1em] border-[1px] border-gray-400 w-[300px] h-[42.8px]"
               id="usernameInput"
-              // eslint-disable-next-line react/jsx-props-no-spreading
-              {...register('username', {
-                required: true,
-              })}
+              onChange={usernameRegister.onChange}
+              onBlur={usernameRegister.onBlur}
+              name={usernameRegister.name}
+              ref={usernameRegister.ref}
               type="text"
             />
             {errors.username && <p>{t('warning')}</p>}

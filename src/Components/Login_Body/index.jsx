@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import React, { useState, useEffect, useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import { collection, addDoc, getDocs } from 'firebase/firestore';
@@ -12,7 +11,7 @@ import { OldUserContext } from '../oldUserContext/oldUserContext';
 const loginBody = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const ref = collection(database, 'users');
+  const refer = collection(database, 'users');
 
   const { setOldData } = useContext(OldUserContext);
 
@@ -24,11 +23,16 @@ const loginBody = () => {
     watch,
   } = useForm();
 
-  // All the useStates
+  // All the useStates and variables
   const [password, setPassword] = useState(0);
   const [username, setUsername] = useState(0);
   const [addValue, setAddValue] = useState(0);
   const [fire, setFire] = useState([]);
+  const user = fire.filter((users) => users.username === username);
+  const urpassword = fire.filter((users) => users.password === password);
+  const userId = user.map((users) => users.id)[0];
+  const usernameRegister = register('username');
+  const passwordRegister = register('password');
 
   // Change the password and username as soon as I type something in the input
   useEffect(() => {
@@ -38,7 +42,7 @@ const loginBody = () => {
   // Fetch and get data as soon as the app loads
   useEffect(() => {
     const getUsers = async () => {
-      const data = await getDocs(ref);
+      const data = await getDocs(refer);
       setFire(data.docs.map((datas) => ({ ...datas.data(), id: datas.id })));
     };
     getUsers();
@@ -54,7 +58,7 @@ const loginBody = () => {
   // Update the users value as I hit the register button
   useEffect(() => {
     const getUsers = async () => {
-      const data = await getDocs(ref);
+      const data = await getDocs(refer);
       setFire(data.docs.map((datas) => ({ ...datas.data(), id: datas.id })));
     };
     getUsers();
@@ -63,6 +67,27 @@ const loginBody = () => {
   const resetField = () => {
     document.getElementById('usernameInput').value = '';
     document.getElementById('passwordInput').value = '';
+  };
+
+  const updateFunc = () => {
+    if (user.length > 0 && urpassword.length > 0) {
+      updateUser(userId, password, username);
+      navigate('/reset');
+    } else {
+      Swal.fire(`${t('errpop')}`, `${t('subwarning')}`, 'error').then((result) => {
+        if (result.isConfirmed) {
+          resetField();
+        }
+      });
+    }
+  };
+
+  const loginFunc = () => {
+    Swal.fire(`${t('gudpop')}`, `${t('subgud')}`, 'success').then((result) => {
+      if (result.isConfirmed) {
+        resetField();
+      }
+    });
   };
 
   return (
@@ -78,7 +103,7 @@ const loginBody = () => {
           className=""
           // Add data to firebase docs on submit
           onSubmit={handleSubmit((data) => {
-            addDoc(ref, {
+            addDoc(refer, {
               username: data.username,
               password: data.password,
             });
@@ -94,9 +119,10 @@ const loginBody = () => {
             <input
               className="block w-full box-border rounded-lg mb-5 text-sm p-[1em] border-[1px] border-gray-400 w-[300px] h-[42.8px]"
               id="usernameInput"
-              {...register('username', {
-                required: true,
-              })}
+              onChange={usernameRegister.onChange}
+              onBlur={usernameRegister.onBlur}
+              name={usernameRegister.name}
+              ref={usernameRegister.ref}
               type="text"
             />
             {errors.username && <p>{t('warning')}</p>}
@@ -108,7 +134,10 @@ const loginBody = () => {
             <input
               className="block w-full box-border rounded-lg mb-5 text-sm p-[1em] border-[1px] border-gray-400 h-[46.8px]"
               id="passwordInput"
-              {...register('password', { required: true })}
+              onChange={passwordRegister.onChange}
+              onBlur={passwordRegister.onBlur}
+              name={passwordRegister.name}
+              ref={passwordRegister.ref}
               type="password"
             />
             {errors.username && <p>{t('warning')}</p>}
@@ -129,20 +158,13 @@ const loginBody = () => {
             className="block w-full bg-gray-800 text-white font-bold p-4 rounded-lg text-xs uppercase tracking-[0,5px]"
             type="button"
             onClick={() => {
-              // eslint-disable-next-line array-callback-return
               fire.map((data) => {
                 if (data.username === username && data.password === password) {
-                  Swal.fire(`${t('gudpop')}`, `${t('subgud')}`, 'success').then((result) => {
-                    if (result.isConfirmed) {
-                      resetField();
-                    }
-                  });
+                  loginFunc();
                 } else if (data.username !== username && data.password !== password) {
-                  Swal.fire(`${t('errpop')}`, `${t('subwarning')}`, 'error').then(() => {
-                    // eslint-disable-next-line no-console
-                    console.log('the user was not right');
-                  });
+                  Swal.fire(`${t('errpop')}`, `${t('subwarning')}`, 'error');
                 }
+                return true;
               });
             }}
           >
@@ -153,19 +175,7 @@ const loginBody = () => {
             className="block w-full bg-gray-800 text-white font-bold p-4 rounded-lg text-xs uppercase tracking-[0,5px]"
             type="button"
             onClick={() => {
-              const user = fire.filter((users) => users.username === username);
-              const urpassword = fire.filter((users) => users.password === password);
-              const userId = user.map((users) => users.id)[0];
-              if (user.length > 0 && urpassword.length > 0) {
-                updateUser(userId, password, username);
-                navigate('/reset');
-              } else {
-                Swal.fire(`${t('errpop')}`, `${t('subwarning')}`, 'error').then((result) => {
-                  if (result.isConfirmed) {
-                    resetField();
-                  }
-                });
-              }
+              updateFunc();
             }}
           >
             {t('update')}

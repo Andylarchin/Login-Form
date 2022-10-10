@@ -1,5 +1,4 @@
-/* eslint-disable react/jsx-no-constructed-context-values */
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import './App.css';
 import { Routes, Route } from 'react-router-dom';
 import Body from './Components/Login_Body';
@@ -9,10 +8,11 @@ import { OldUserContext } from './Components/oldUserContext/oldUserContext';
 function App() {
   const [oldData, setOldData] = useState([]);
 
+  const datas = useMemo(() => ({ oldData, setOldData }), []);
+
   return (
-    // eslint-disable-next-line react/jsx-no-comment-textnodes
     <div className="App">
-      <OldUserContext.Provider value={{ oldData, setOldData }}>
+      <OldUserContext.Provider value={datas}>
         <Routes>
           <Route exact path="/" element={<Body />} />
           <Route path="/reset" element={<Reset />} />

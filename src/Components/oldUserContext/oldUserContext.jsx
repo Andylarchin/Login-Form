@@ -1,3 +1,5 @@
-import {createContext} from 'react';
+import { createContext } from 'react';
 
-export const OldUserContext = createContext(0);
+const OldUserContext = createContext(0);
+
+export default OldUserContext;
