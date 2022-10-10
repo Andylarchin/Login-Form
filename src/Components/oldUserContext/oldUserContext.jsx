@@ -1,5 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 import { createContext } from 'react';
 
-const OldUserContext = createContext(0);
-
-export default OldUserContext;
+export const OldUserContext = createContext(0);
