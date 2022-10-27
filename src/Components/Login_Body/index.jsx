@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useForm } from 'react-hook-form';
+import LuigiClient from '@luigi-project/client';
 import { collection, addDoc, getDocs } from 'firebase/firestore';
 import detectBrowserLanguage from 'detect-browser-language';
 import { useNavigate } from 'react-router-dom';
@@ -38,6 +39,8 @@ const loginBody = () => {
   useEffect(() => {
     setUsername(watch().username);
     setPassword(watch().password);
+    LuigiClient.sendCustomMessage({ id: 'localmessage', message: fire });
+    LuigiClient.addCustomMessageListener('aye', (data) => console.log(data));
   }, [watch()]);
   // Fetch and get data as soon as the app loads
   useEffect(() => {
@@ -46,7 +49,6 @@ const loginBody = () => {
       setFire(data.docs.map((datas) => ({ ...datas.data(), id: datas.id })));
     };
     getUsers();
-
     i18n.changeLanguage(detectBrowserLanguage());
   }, []);
 
@@ -179,6 +181,17 @@ const loginBody = () => {
             }}
           >
             {t('update')}
+          </button>
+
+          <br />
+          <button
+            className="block w-full bg-gray-800 text-white font-bold p-4 rounded-lg text-xs uppercase tracking-[0,5px]"
+            type="button"
+            onClick={() => {
+              LuigiClient.linkManager().navigate('/home/empty');
+            }}
+          >
+            Play TicTacToe!
           </button>
         </form>
       </div>
