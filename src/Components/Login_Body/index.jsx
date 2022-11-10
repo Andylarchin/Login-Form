@@ -37,9 +37,16 @@ const loginBody = () => {
 
   // Change the password and username as soon as I type something in the input
   useEffect(() => {
+    LuigiClient.setTargetOrigin('http://localhost:3000');
+  }, []);
+
+  useEffect(() => {
     setUsername(watch().username);
     setPassword(watch().password);
-    LuigiClient.sendCustomMessage({ id: 'localmessage', message: fire });
+    LuigiClient.sendCustomMessage({
+      id: 'localmessage',
+      message: { someUserData: 'im some data' },
+    });
     LuigiClient.addCustomMessageListener('aye', (data) => console.log(data));
   }, [watch()]);
   // Fetch and get data as soon as the app loads
